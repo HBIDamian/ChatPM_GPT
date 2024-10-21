@@ -1,0 +1,6 @@
+name: ChatPM_GPT
+version: 1.0.0
+main: HBIDamian\ChatPM_GPT\Main
+api: 5.0.0
+author: HBIDamian
+description: A PocketMine plugin that enables AI-powered chat using OpenAI API.

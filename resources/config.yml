@@ -1,0 +1,30 @@
+# This is the configuration file for ChatPMGPT. You can modify the settings here to customize the plugin to your liking.
+
+# OpenAI API settings. You can get these from https://platform.openai.com/account/api-keys
+ApiUrl: "https://api.openai.com/v1/chat/completions"
+ApiKey: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+
+# Best to leave these as they are unless you know what you're doing!
+ChatModel: "gpt-4o-mini" # For a list of available models, see https://platform.openai.com/docs/models
+MaxTokens: 70 # Max tokens per response. 1 token is roughly 4 characters. Best to keep this low to prevent long responses.
+Temperature: 1.25 # Higher temperature means more randomness in responses. Keep this low for more coherent responses.
+TopP: 1.0 # Top P is a way to control the diversity of responses. Keep this at 1.0 for best results.
+FrequencyPenalty: 0.75 # How much to penalize new tokens based on their existing frequency in the text.
+PresencePenalty: 0.25 # How much to penalize new tokens based on their existing presence in the text.
+
+# Frontend settings for the Chat Bot.
+BotName: "Botty McBotface" # The name of the AI bot.
+BotTrigger: "@Botty" # This is the text that the player will need to type to trigger the AI.
+
+# System prompt for the AI. This is the prompt that the AI will use to generate responses.
+#   Available placeholders:
+#   - {BOT_NAME}    - Bot's name
+#   - {PLAYER_NAME} - Player's name
+SystemPrompt: "You are a AI chat bot that's taking place in a PocketMine Minecraft Bedrock Edition server. Your name is '{BOT_NAME}', and you're currently speaking to '{PLAYER_NAME}'. '{BOT_NAME}' is witty, clever, and very friendly. '{BOT_NAME}' is here to have fun conversations in the Minecraft Chat. Don't ask if you can help. Just be yourself and have fun! Minecraft doesn't unicode emotes, so you can't use emojis! You can use :), :(, :D type emotes though. Just don't overdo it.\n\nLimit your character count to 160 characters or less. Keep your responses friendly and appropriate for all ages. You can't physically interact with the world, but you can interact with players through chat. You can't give out personal information or ask for personal information. You can't swear, bully, or be mean. You can't advertise or promote anything. You can't spam. You can't impersonate staff or other players. You can't share links or URLs of any kind."
+
+# Bot output format. This is how the bot's response will be formatted in the chat.
+#   Available placeholders: 
+#   - {BOT_NAME} - Bot's name
+#   - {RESPONSE} - Bot's response
+BotOutputFormat: "<&g{BOT_NAME}§r> {RESPONSE}"
