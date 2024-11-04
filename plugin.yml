@@ -4,3 +4,8 @@ main: HBIDamian\ChatPM_GPT\Main
 api: 5.0.0
 author: HBIDamian
 description: A PocketMine plugin that enables AI-powered chat using OpenAI API.
+
+permissions:
+  chatpmgpt.use:
+    default: true
+    description: Allows the player to use the chatbot

@@ -9,27 +9,35 @@ class BotHandler extends AsyncTask {
     private string $playerName;
     private string $input;
     private string $configJson;
+    private string $historyJson; // Use string for thread safety
 
     public function __construct(string $playerName, string $input, array $config) {
         $this->playerName = $playerName;
         $this->input = $input;
         $this->configJson = json_encode($config);
+        $this->historyJson = $config['history']; // Pass history as JSON string
     }
 
     public function onRun(): void {
         $config = json_decode($this->configJson, true);
-        // Replace placeholders in the system prompt
-        $config['systemPrompt'] = str_replace(
+        $history = json_decode($this->historyJson, true); // Decode history JSON to array
+
+        // Combine history into messages for OpenAI API
+        $systemPrompt = str_replace(
             ["{BOT_NAME}", "{PLAYER_NAME}"],
             [$config['botName'], $this->playerName],
             $config['systemPrompt']
         );
+        $messages = [["role" => "system", "content" => $systemPrompt]];
+
+        foreach ($history as $entry) {
+            $messages[] = ["role" => "user", "content" => $entry['content']];
+        }
+        $messages[] = ["role" => "user", "content" => $this->input];
+
         $postData = json_encode([
             "model" => $config['model'],
-            "messages" => [
-                ["role" => "system", "content" => $config['systemPrompt']],
-                ["role" => "user", "content" => $this->input]
-            ],
+            "messages" => $messages,
             "temperature" => $config['temperature'],
             "max_tokens" => $config['maxTokens'],
             "top_p" => $config['topP'],
@@ -54,29 +62,21 @@ class BotHandler extends AsyncTask {
 
         $data = json_decode($result, true);
 
-        // Check for API errors
         if (isset($data['error']['message'])) {
-            $this->setResult([
-                "error" => "API Error: " . $data['error']['message']
-            ]);
+            $this->setResult(["error" => "API Error: " . $data['error']['message']]);
             return;
         }
 
-        // Handle request errors
         if ($httpCode !== 200 || !$result) {
             $error = curl_error($ch);
             curl_close($ch);
-            $this->setResult([
-                "error" => $error ?: "Request failed. HTTP Code: " . $httpCode
-            ]);
+            $this->setResult(["error" => $error ?: "Request failed. HTTP Code: " . $httpCode]);
             return;
         }
-        // Close cURL
         curl_close($ch);
 
         if (isset($data['choices'][0]['message']['content'])) {
             $response = $data['choices'][0]['message']['content'];
-            // Format the output
             $output = str_replace(
                 ["{BOT_NAME}", "{RESPONSE}"],
                 [$config['botName'], $response],
@@ -84,9 +84,7 @@ class BotHandler extends AsyncTask {
             );
             $this->setResult(["response" => TextFormat::colorize($output)]);
         } else {
-            $this->setResult([
-                "error" => "An unexpected error occurred while processing the response."
-            ]);
+            $this->setResult(["error" => "An unexpected error occurred while processing the response."]);
         }
     }
 
@@ -101,7 +99,7 @@ class BotHandler extends AsyncTask {
             } elseif (isset($result["error"])) {
                 $player->sendMessage(TextFormat::RED . "An error occurred while processing your request.");
                 $server->getLogger()->error("Error processing request for player " . $this->playerName . ": " . $result["error"]);
-            } 
+            }
         }
     }
 }

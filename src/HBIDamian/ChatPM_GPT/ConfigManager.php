@@ -54,6 +54,10 @@ class ConfigManager {
         return $this->plugin->getConfig()->get("BotTrigger");
     }
 
+    public function getMaxHistoryCount(): int {
+        return $this->plugin->getConfig()->get("MaxHistoryCount", 6);
+    }    
+
     public function getBotOutputFormat(): string {
         return $this->plugin->getConfig()->get("BotOutputFormat");
     }
